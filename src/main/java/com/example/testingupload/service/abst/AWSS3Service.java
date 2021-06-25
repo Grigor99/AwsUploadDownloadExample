@@ -11,4 +11,6 @@ public interface AWSS3Service {
     // @Async annotation ensures that the method is executed in a different background thread
     // but not consume the main thread.
     byte[] downloadFile(String keyName) throws NotFoundException;
+
+    void deleteFile(String keyName) throws NotFoundException;
 }

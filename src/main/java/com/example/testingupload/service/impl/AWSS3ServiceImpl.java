@@ -2,11 +2,9 @@ package com.example.testingupload.service.impl;
 
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.example.testingupload.exception.NotFoundException;
 import com.example.testingupload.model.AwsFile;
@@ -78,5 +76,19 @@ public class AWSS3ServiceImpl implements AWSS3Service {
         } catch (final IOException ex) {
         }
         return content;
+    }
+
+    @Override
+    public void deleteFile(String keyName) throws NotFoundException {
+        AwsFile awsFile=awsFileRepository.findByFileKey(keyName);
+        NotFoundException.check(awsFile==null,"not found item");
+        try{
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName,keyName);
+            amazonS3.deleteObject(deleteObjectRequest);
+            awsFileRepository.delete(awsFile);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
 }

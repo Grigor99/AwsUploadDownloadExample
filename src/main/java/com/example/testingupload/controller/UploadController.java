@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("/api/up")
 public class UploadController {
@@ -34,5 +36,14 @@ public class UploadController {
                 .header("Content-type", "application/octet-stream")
                 .header("Content-disposition", "attachment; filename=\"" + keyName + "\"")
                 .body(resource);
+    }
+
+    @DeleteMapping("/del/fileName/{keyName}")
+    public ResponseEntity<?> delete(@PathVariable("keyName") String keyName) throws NotFoundException {
+               awss3Service.deleteFile(keyName);
+               return ResponseEntity.status(202)
+                       .lastModified(new Date().getTime())
+                       .body("deleted");
+
     }
 }
