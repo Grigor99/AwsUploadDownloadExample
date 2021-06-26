@@ -7,7 +7,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-@EnableAsync
 @SpringBootApplication
 public class TestingUploadApplication {
 
@@ -17,11 +16,5 @@ public class TestingUploadApplication {
 
 
 
-    @Bean
-    public TaskExecutor taskExecutorUrgent() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(5);
-        threadPoolTaskExecutor.setMaxPoolSize(10);
-        return threadPoolTaskExecutor;
-    }
+
 }

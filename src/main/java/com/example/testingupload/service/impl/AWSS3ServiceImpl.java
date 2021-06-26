@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class AWSS3ServiceImpl implements AWSS3Service {
@@ -34,14 +36,19 @@ public class AWSS3ServiceImpl implements AWSS3Service {
     private String bucketName;
 
     @Override
-    @Async("taskExecutorUrgent")
     public void uploadFile(final MultipartFile multipartFile) {
-        try {
-            final File file = convertMultiPartFileToFile(multipartFile);
-            uploadFileToS3Bucket(bucketName, file);
-            file.delete();  // To remove the file locally created in the project folder.
-        } catch (final AmazonServiceException ex) {
-        }
+        Runnable runnable = () ->{
+            try {
+                final File file = convertMultiPartFileToFile(multipartFile);
+                uploadFileToS3Bucket(bucketName, file);
+                file.delete();
+            } catch (final AmazonServiceException ex) {
+            }
+        };
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(runnable);
+        executorService.shutdown();
+
     }
 
     private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
